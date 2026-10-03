@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "Fuel Route Planner API",
+    "description": "Plan a fuel-optimized driving route between two US locations.\n\nLocations accept `City, ST`, `lat,lon` or a full US address.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" }
+  ],
+  "item": [
+    {
+      "name": "Plan route (GET) - New York to Los Angeles",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/route/?start=New York, NY&finish=Los Angeles, CA",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", ""],
+          "query": [
+            { "key": "start", "value": "New York, NY" },
+            { "key": "finish", "value": "Los Angeles, CA" }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('has fuel stops and total cost', () => {",
+              "  pm.expect(body.fuel_stops.length).to.be.above(0);",
+              "  pm.expect(body.summary.total_fuel_cost).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plan route (POST JSON) - Dallas to Chicago",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"start\": \"Dallas, TX\",\n  \"finish\": \"Chicago, IL\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/route/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", ""]
+        }
+      }
+    },
+    {
+      "name": "Plan route (POST) - address to coordinates",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"start\": \"1600 Pennsylvania Ave NW, Washington, DC\",\n  \"finish\": \"36.1699,-115.1398\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/route/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", ""]
+        }
+      }
+    },
+    {
+      "name": "Plan route - Seattle to Miami (long trip)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/route/?start=Seattle, WA&finish=Miami, FL",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", ""],
+          "query": [
+            { "key": "start", "value": "Seattle, WA" },
+            { "key": "finish", "value": "Miami, FL" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Route map (HTML) - open in browser",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/route/map/?start=Dallas, TX&finish=Chicago, IL",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", "map", ""],
+          "query": [
+            { "key": "start", "value": "Dallas, TX" },
+            { "key": "finish", "value": "Chicago, IL" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Error - missing finish (400)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/route/?start=Dallas, TX",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", ""],
+          "query": [{ "key": "start", "value": "Dallas, TX" }]
+        }
+      }
+    },
+    {
+      "name": "Error - location outside USA (400)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/route/?start=Paris, France&finish=Dallas, TX",
+          "host": ["{{base_url}}"],
+          "path": ["api", "route", ""],
+          "query": [
+            { "key": "start", "value": "Paris, France" },
+            { "key": "finish", "value": "Dallas, TX" }
+          ]
+        }
+      }
+    }
+  ]
+}
