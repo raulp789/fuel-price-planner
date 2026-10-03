@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fuel Route Planner</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f3f4f6;
+           font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f2937; }
+    main { width: 100%; max-width: 560px; margin: 24px; background: #fff; border: 1px solid #e5e7eb;
+           border-radius: 12px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,.05); }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    p { margin: 0 0 20px; color: #6b7280; font-size: 14px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin: 12px 0 4px; }
+    input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; }
+    input:focus { outline: 2px solid #2563eb33; border-color: #2563eb; }
+    .actions { display: flex; gap: 10px; margin-top: 18px; }
+    button { flex: 1; padding: 11px; border: 0; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .primary { background: #2563eb; color: #fff; }
+    .secondary { background: #e5e7eb; color: #111827; }
+    .links { margin-top: 22px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 13px; color: #6b7280; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Fuel Route Planner</h1>
+    <p>Cheapest fuel stops between two US locations (500 mi range, 10 MPG).</p>
+    <form id="route-form" action="{% url 'route-map' %}" method="get">
+      <label for="start">Start</label>
+      <input id="start" name="start" value="New York, NY" placeholder="City, ST  |  lat,lon  |  address" required>
+      <label for="finish">Finish</label>
+      <input id="finish" name="finish" value="Los Angeles, CA" placeholder="City, ST  |  lat,lon  |  address" required>
+      <div class="actions">
+        <button class="primary" type="submit">Show map</button>
+        <button class="secondary" type="submit" formaction="{% url 'route-plan' %}">View JSON</button>
+      </div>
+    </form>
+    <div class="links">
+      API: <code>GET {% url 'route-plan' %}?start=...&amp;finish=...</code> or <code>POST {% url 'route-plan' %}</code>
+      with <code>{"start": "...", "finish": "..."}</code><br>
+      Example: <a href="{% url 'route-plan' %}?start=Dallas,%20TX&amp;finish=Chicago,%20IL">Dallas, TX &rarr; Chicago, IL (JSON)</a>
+    </div>
+  </main>
+</body>
+</html>
